@@ -111,7 +111,7 @@ func (fs *Client) makeRequest(r *http.Request, v interface{}) error {
 	}
 	defer res.Body.Close()
 
-	// If status code is not ok attempt to read the response in plain text
+	// If status code is not OK attempt to read the response in plain text
 	if res.StatusCode != 200 && res.StatusCode != 201 {
 		responseData, err := ioutil.ReadAll(res.Body)
 		if err != nil {
