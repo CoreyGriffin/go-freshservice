@@ -2,7 +2,9 @@ package freshservice
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -43,7 +45,7 @@ func defaultHTTPClient() *http.Client {
 	}
 }
 
-// New returns a new Freshservice API client
+// New returns a new Freshservice API client that can be used for both V1 and V2 of the Freshservice API
 func New(ctx context.Context, domain string, version int, username string, secret string, l *logrus.Logger, client *http.Client) (*Client, error) {
 
 	if ctx == nil {
@@ -94,4 +96,33 @@ func New(ctx context.Context, domain string, version int, username string, secre
 		},
 		client: client,
 	}, nil
+}
+
+// makeRequest is used internally by the Freshservice API client to
+// make an API request and unmarshal into the response interface passed in
+func (fs *Client) makeRequest(r *http.Request, v interface{}) error {
+	r.Header.Set("Accept", "application/json")
+	r.Header.Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0")
+	r.Header.Set("Strict-Transport-Security", "max-age=31536000 ; includeSubDomains")
+	r.SetBasicAuth(fs.Auth.APIKey, "x")
+	res, err := fs.client.Do(r)
+	if err != nil {
+		return fmt.Errorf("error making %s request to %s", r.Method, r.URL)
+	}
+	defer res.Body.Close()
+
+	// If status code is not ok attempt to read the response in plain text
+	if res.StatusCode != 200 && res.StatusCode != 201 {
+		responseData, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return fmt.Errorf("API request error: %s. unable to retrieve plain text response: %s", res.Status, err.Error())
+		}
+		return fmt.Errorf("API request error: %s", string(responseData))
+	}
+
+	if err = json.NewDecoder(res.Body).Decode(&v); err != nil {
+		return fmt.Errorf("API request was successful but error occured error decoding response body")
+	}
+
+	return nil
 }
