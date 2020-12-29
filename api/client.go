@@ -18,7 +18,7 @@ type Client struct {
 	Version int
 	// endpoint is a calculated field based on the version number and is
 	// either equal to the domain or domain/api/v2
-	endpoint string
+	Endpoint string
 	// Context to leverage during the lifetime of the client
 	Context context.Context
 	// Logging configuration
@@ -44,8 +44,7 @@ func defaultHTTPClient() *http.Client {
 }
 
 // New returns a new Freshservice API client
-func New(ctx context.Context, domain string, version int, username, string, secret string, l *logrus.Logger, client *http.Client) (*Client, error) {
-	var ep string
+func New(ctx context.Context, domain string, version int, username string, secret string, l *logrus.Logger, client *http.Client) (*Client, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -66,6 +65,7 @@ func New(ctx context.Context, domain string, version int, username, string, secr
 
 	// default to V1 if an API version is not provided
 	// and error out if version greater than 2 is provided
+	var ep string
 	switch version {
 	case 1:
 		ep = domain
@@ -85,7 +85,7 @@ func New(ctx context.Context, domain string, version int, username, string, secr
 	return &Client{
 		Domain:   domain,
 		Version:  version,
-		endpoint: ep,
+		Endpoint: ep,
 		Context:  ctx,
 		Logger:   l,
 		Auth: &BasicAuth{
