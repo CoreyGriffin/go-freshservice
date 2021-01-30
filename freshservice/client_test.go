@@ -33,11 +33,11 @@ func TestNewClientSuccess(t *testing.T) {
 func TestNewClientFailMissingDomain(t *testing.T) {
 	_, err := freshservice.New(nil, "", apiKey, logger, nil)
 	assert.NotNil(t, err)
-	assert.Equal(t, "a valid Freshservice domain is required to create a new API client", err.Error())
+	assert.Equal(t, "A valid Freshservice domain is required to create a new API client", err.Error())
 }
 
 func TestNewClientFailMissingAPIKey(t *testing.T) {
 	_, err := freshservice.New(nil, domain, "", logger, nil)
 	assert.NotNil(t, err)
-	assert.Equal(t, "a valid Freshservice API Key is required to create a new API client", err.Error())
+	assert.Equal(t, "A valid Freshservice API key is required to create a new API client", err.Error())
 }
