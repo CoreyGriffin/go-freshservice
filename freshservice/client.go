@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -16,11 +18,6 @@ import (
 type Client struct {
 	// Freshservice domain
 	Domain string
-	// Version of the API to utilize (defaults to v1)
-	Version int
-	// endpoint is a calculated field based on the version number and is
-	// either equal to the domain or domain/api/v2
-	Endpoint string
 	// Context to leverage during the lifetime of the client
 	Context context.Context
 	// Logging configuration
@@ -34,8 +31,7 @@ type Client struct {
 // BasicAuth holds the basic auth requirements needed to
 // utilize the Freshservice API
 type BasicAuth struct {
-	Username string
-	APIKey   string
+	APIKey string
 }
 
 // Used if custom client not passed in when NewClient instantiated
@@ -46,7 +42,7 @@ func defaultHTTPClient() *http.Client {
 }
 
 // New returns a new Freshservice API client that can be used for both V1 and V2 of the Freshservice API
-func New(ctx context.Context, domain string, version int, username string, secret string, l *logrus.Logger, client *http.Client) (*Client, error) {
+func New(ctx context.Context, domain string, apikey string, l *logrus.Logger, client *http.Client) (*Client, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -57,25 +53,8 @@ func New(ctx context.Context, domain string, version int, username string, secre
 		return nil, missingClientConfigErr("domain")
 	}
 
-	if username == "" {
-		return nil, missingClientConfigErr("username")
-	}
-
-	if secret == "" {
-		return nil, missingClientConfigErr("API Key")
-	}
-
-	// default to V1 if an API version is not provided
-	// and error out if version greater than 2 is provided
-	var ep string
-	switch version {
-	case 1:
-		ep = domain
-	case 2:
-		ep = fmt.Sprintf("%s/api/v2", domain)
-	default:
-		version = 1
-		ep = domain
+	if apikey == "" {
+		return nil, missingClientConfigErr("API key")
 	}
 
 	// default to HTTP client if one is not provided
@@ -85,14 +64,11 @@ func New(ctx context.Context, domain string, version int, username string, secre
 	}
 
 	return &Client{
-		Domain:   domain,
-		Version:  version,
-		Endpoint: ep,
-		Context:  ctx,
-		Logger:   l,
+		Domain:  stripURLScheme(domain),
+		Context: ctx,
+		Logger:  l,
 		Auth: &BasicAuth{
-			Username: username,
-			APIKey:   secret,
+			APIKey: apikey,
 		},
 		client: client,
 	}, nil
@@ -105,6 +81,12 @@ func (fs *Client) makeRequest(r *http.Request, v interface{}) error {
 	r.Header.Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0")
 	r.Header.Set("Strict-Transport-Security", "max-age=31536000 ; includeSubDomains")
 	r.SetBasicAuth(fs.Auth.APIKey, "x")
+
+	// Replace scheme for unit tests that are using a mock server
+	if os.Getenv("GO_TEST") == "1" {
+		r.URL.Scheme = "http"
+	}
+
 	res, err := fs.client.Do(r)
 	if err != nil {
 		return fmt.Errorf("error making %s request to %s", r.Method, r.URL)
@@ -125,4 +107,16 @@ func (fs *Client) makeRequest(r *http.Request, v interface{}) error {
 	}
 
 	return nil
+}
+
+// We set the scheme in the HTTP request
+func stripURLScheme(domain string) string {
+	domain = strings.Replace(domain, "https://", "", -1)
+	domain = strings.Replace(domain, "http://", "", -1)
+	return domain
+}
+
+// Tickets is the interface between the HTTP client and the Freshservice ticket related endpoints
+func (fs *Client) Tickets() TicketService {
+	return &TicketServiceClient{client: fs}
 }

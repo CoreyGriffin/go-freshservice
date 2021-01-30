@@ -26,6 +26,7 @@ clean:
 
 deps:
 	@go mod tidy
+	@go mod vendor
 
 fmt:
 	@go fmt ${DIRS}
@@ -46,6 +47,6 @@ test-integration:
 	go tool cover -html=cp.out -o .coverage.html
 
 build:
-	@go build -ldflags="-s -w" -o bin/go-freshservice ./api
+	@go build -ldflags="-s -w" -o /usr/local/bin/go-freshservice ./api
 
 pr-prep: clean build deps fmt lint test-race test-integration clean
