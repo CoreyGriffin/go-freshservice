@@ -71,7 +71,7 @@ func (t *TicketServiceClient) Create(ctx context.Context, td *TicketDetails) (*T
 
 	body := bytes.NewReader(ticketContent)
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url.String(), body)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +130,7 @@ func (t *TicketServiceClient) Update(ctx context.Context, id int, details *Ticke
 
 	body := bytes.NewReader(ticketContent)
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url.String(), body)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPut, url.String(), body)
 	if err != nil {
 		return nil, err
 	}
