@@ -98,8 +98,10 @@ func (fs *Client) makeRequest(r *http.Request, v interface{}) error {
 		return fmt.Errorf("API request error: %s", string(responseData))
 	}
 
-	if err = json.NewDecoder(res.Body).Decode(&v); err != nil {
-		return fmt.Errorf("API request was successful but error occured error decoding response body")
+	if v != nil {
+		if err = json.NewDecoder(res.Body).Decode(&v); err != nil {
+			return fmt.Errorf("API request was successful but error occured error decoding response body")
+		}
 	}
 
 	return nil
@@ -120,4 +122,9 @@ func (fs *Client) Tickets() TicketService {
 // ServiceCatalog is the interface between the HTTP client and the Freshservice service catalog related endpoints
 func (fs *Client) ServiceCatalog() ServiceCatalogService {
 	return &ServiceCatalogServiceClient{client: fs}
+}
+
+// Announcements is the interface between the HTTP client and the Freshservice announcement related endpoints
+func (fs *Client) Announcements() AnnouncementService {
+	return &AnnouncementServiceClient{client: fs}
 }
