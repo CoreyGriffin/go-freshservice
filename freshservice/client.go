@@ -9,8 +9,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
-	"github.com/sirupsen/logrus"
 )
 
 // Client represents a new Freshservice API client to
@@ -20,8 +18,7 @@ type Client struct {
 	Domain string
 	// Context to leverage during the lifetime of the client
 	Context context.Context
-	// Logging configuration
-	Logger *logrus.Logger
+
 	// Basic Authentication requried for Freshservice API calls
 	Auth *BasicAuth
 	// API client to utilize for making HTTP requests
@@ -42,7 +39,7 @@ func defaultHTTPClient() *http.Client {
 }
 
 // New returns a new Freshservice API client that can be used for both V1 and V2 of the Freshservice API
-func New(ctx context.Context, domain string, apikey string, l *logrus.Logger, client *http.Client) (*Client, error) {
+func New(ctx context.Context, domain string, apikey string, client *http.Client) (*Client, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -66,7 +63,6 @@ func New(ctx context.Context, domain string, apikey string, l *logrus.Logger, cl
 	return &Client{
 		Domain:  stripURLScheme(domain),
 		Context: ctx,
-		Logger:  l,
 		Auth: &BasicAuth{
 			APIKey: apikey,
 		},

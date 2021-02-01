@@ -11,7 +11,7 @@ import (
 func main() {
 	APIKey := "testing-123"
 	ctx := context.Background()
-	api, err := fs.New(ctx, "example.com", APIKey, nil, nil)
+	api, err := fs.New(ctx, "example.com", APIKey, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
