@@ -5,25 +5,23 @@ import (
 	"testing"
 
 	"github.com/CoreyGriffin/go-freshservice/freshservice"
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
 	domain = "https://domain.freshservice.com"
 	apiKey = "testAPIKey"
-	logger = logrus.New()
 )
 
 func TestNewClientDefaultHTTP(t *testing.T) {
-	c, err := freshservice.New(nil, domain, apiKey, logger, nil)
+	c, err := freshservice.New(nil, domain, apiKey, nil)
 	assert.Nil(t, err)
 	assert.NotNil(t, c)
 	assert.Equal(t, context.Background(), c.Context)
 }
 
 func TestNewClientSuccess(t *testing.T) {
-	c, err := freshservice.New(nil, domain, apiKey, logger, nil)
+	c, err := freshservice.New(nil, domain, apiKey, nil)
 	assert.Nil(t, err)
 	assert.NotNil(t, c)
 	assert.Equal(t, context.Background(), c.Context)
@@ -31,13 +29,13 @@ func TestNewClientSuccess(t *testing.T) {
 }
 
 func TestNewClientFailMissingDomain(t *testing.T) {
-	_, err := freshservice.New(nil, "", apiKey, logger, nil)
+	_, err := freshservice.New(nil, "", apiKey, nil)
 	assert.NotNil(t, err)
 	assert.Equal(t, "A valid Freshservice domain is required to create a new API client", err.Error())
 }
 
 func TestNewClientFailMissingAPIKey(t *testing.T) {
-	_, err := freshservice.New(nil, domain, "", logger, nil)
+	_, err := freshservice.New(nil, domain, "", nil)
 	assert.NotNil(t, err)
 	assert.Equal(t, "A valid Freshservice API key is required to create a new API client", err.Error())
 }
