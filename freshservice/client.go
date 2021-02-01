@@ -116,3 +116,8 @@ func stripURLScheme(domain string) string {
 func (fs *Client) Tickets() TicketService {
 	return &TicketServiceClient{client: fs}
 }
+
+// ServiceCatalog is the interface between the HTTP client and the Freshservice service catalog related endpoints
+func (fs *Client) ServiceCatalog() ServiceCatalogService {
+	return &ServiceCatalogServiceClient{client: fs}
+}

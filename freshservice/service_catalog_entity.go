@@ -47,6 +47,21 @@ type ServiceCatalogItemDetails struct {
 	ChildItems             []interface{}     `json:"child_items"`
 }
 
+// ServiceCategories represents service catalog item categories in Freshservice
+type ServiceCategories struct {
+	List []ServiceCategory `json:"service_categories"`
+}
+
+// ServiceCategory represents a category assigned to a service catalog item in Freshservice
+type ServiceCategory struct {
+	Description string    `json:"description"`
+	ID          int       `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	Name        string    `json:"name"`
+	Position    int       `json:"position"`
+}
+
 // ServiceCatalogItemListFilterOptions are the available filter options
 // for a service catalog API list request
 type ServiceCatalogItemListFilterOptions struct {

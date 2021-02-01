@@ -7,12 +7,16 @@ import (
 	"net/url"
 )
 
-const serviceCatalogItemURL = "/api/v2/service_catalog/items"
+const (
+	serviceCatalogItemURL     = "/api/v2/service_catalog/items"
+	serviceCatalogCategoryURL = "/api/v2/service_catalog/categories"
+)
 
 // ServiceCatalogService is an interface for interacting with
 // the service catalog endpoints of the Freshservice API
 type ServiceCatalogService interface {
 	List(context.Context, QueryFilter) ([]ServiceCatalogItemDetails, error)
+	Categories(context.Context) ([]ServiceCategory, error)
 	Get(context.Context, int) (*ServiceCatalogItemDetails, error)
 }
 
@@ -45,6 +49,27 @@ func (sc *ServiceCatalogServiceClient) List(ctx context.Context, filter QueryFil
 	}
 
 	return res.Items, nil
+}
+
+// Categories will list all service catalog item categories in freshservice
+func (sc *ServiceCatalogServiceClient) Categories(ctx context.Context) ([]ServiceCategory, error) {
+	url := &url.URL{
+		Scheme: "https",
+		Host:   sc.client.Domain,
+		Path:   serviceCatalogCategoryURL,
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res := &ServiceCategories{}
+	if err := sc.client.makeRequest(req, res); err != nil {
+		return nil, err
+	}
+
+	return res.List, nil
 }
 
 // Get a specific service category item from Freshservice via the item's ID
