@@ -32,7 +32,7 @@ func main() {
 
 	// List tickets using a built in filer query and sort by
 	f := &fs.TicketListOptions{
-		FilterBy: &fs.TicketFilterOptions{
+		FilterBy: &fs.TicketFilter{
 			RequesterEmail: fs.String("test-account@example.com"),
 		},
 		SortBy: &fs.SortOptions{
