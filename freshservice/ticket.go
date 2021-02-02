@@ -48,12 +48,12 @@ func (t *TicketServiceClient) List(ctx context.Context, filter QueryFilter) ([]T
 		return nil, err
 	}
 
-	res := &TicketList{}
+	res := &Tickets{}
 	if err := t.client.makeRequest(req, res); err != nil {
 		return nil, err
 	}
 
-	return res.Tickets, nil
+	return res.List, nil
 }
 
 // Create a new Freshservice ticket
