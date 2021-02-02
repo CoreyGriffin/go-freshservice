@@ -1,6 +1,6 @@
 # go-freshservice
 
-go-freshservice is an unofficial Golang API client for interacting with most facets of the [Freshservice API](https://api.freshservice.com/v2/#introduction)
+go-freshservice is an unofficial Golang API client that aims to provide access to most facets of the [Freshservice API](https://api.freshservice.com/v2/#introduction)
 
 ## Usage
 
@@ -31,7 +31,7 @@ if err != nil {
 
 // Add optional filter to list call
 filter := &fs.TicketListOptions{
-  FilterBy: &fs.TicketFilterOptions{
+  FilterBy: &fs.TicketFilter{
     RequesterEmail: fs.String("test-account@example.com"),
   },
   SortBy: &fs.SortOptions{

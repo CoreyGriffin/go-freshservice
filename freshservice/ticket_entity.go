@@ -137,7 +137,7 @@ type CustomFields map[string]interface{}
 // TicketListOptions holds the available options that can be
 // passed when requesting a list of Freshservice ticketsx
 type TicketListOptions struct {
-	FilterBy *TicketFilterOptions
+	FilterBy *TicketFilter
 	SortBy   *SortOptions
 	Embed    *TicketEmbedOptions
 }
@@ -156,8 +156,8 @@ type SortOptions struct {
 	Descending bool
 }
 
-// TicketFilterOptions are optional filters that can be enabled when querying a ticket list
-type TicketFilterOptions struct {
+// TicketFilter are optional filters that can be enabled when querying a ticket list
+type TicketFilter struct {
 	NewAndMyOpen   bool
 	Watching       bool
 	Spam           bool
