@@ -62,13 +62,13 @@ type ServiceCategory struct {
 	Position    int       `json:"position"`
 }
 
-// ServiceCatalogItemListFilterOptions are the available filter options
+// ServiceCatalogItemListFilter are the available filter options
 // for a service catalog API list request
-type ServiceCatalogItemListFilterOptions struct {
+type ServiceCatalogItemListFilter struct {
 	CatalogID int
 }
 
 // QueryString allows the available filter items to meet the QueryFilter interface
-func (scf *ServiceCatalogItemListFilterOptions) QueryString() string {
+func (scf *ServiceCatalogItemListFilter) QueryString() string {
 	return fmt.Sprintf("category_id=%d", scf.CatalogID)
 }
