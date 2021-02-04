@@ -114,7 +114,7 @@ func (a *AnnouncementServiceClient) Update(ctx context.Context, id int, details 
 
 	body := bytes.NewReader(announcementContent)
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url.String(), body)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPut, url.String(), body)
 	if err != nil {
 		return nil, err
 	}

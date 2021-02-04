@@ -128,3 +128,8 @@ func (fs *Client) ServiceCatalog() ServiceCatalogService {
 func (fs *Client) Announcements() AnnouncementService {
 	return &AnnouncementServiceClient{client: fs}
 }
+
+// Agents is the interface between the HTTP client and the Freshservice agent related endpoints
+func (fs *Client) Agents() AgentService {
+	return &AgentServiceClient{client: fs}
+}

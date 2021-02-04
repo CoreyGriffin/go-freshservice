@@ -45,9 +45,9 @@ const (
 	SourceSlack = 10
 )
 
-// TicketList holds a list of tickets returned from the Freshservice API
-type TicketList struct {
-	Tickets []TicketDetails `json:"tickets"`
+// Tickets holds a list of tickets returned from the Freshservice API
+type Tickets struct {
+	List []TicketDetails `json:"tickets"`
 }
 
 // Ticket represents a Freshservice ticket object
