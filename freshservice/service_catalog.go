@@ -44,7 +44,7 @@ func (sc *ServiceCatalogServiceClient) List(ctx context.Context, filter QueryFil
 	}
 
 	res := &ServiceCatalog{}
-	if err := sc.client.makeRequest(req, res); err != nil {
+	if _, err := sc.client.makeRequest(req, res); err != nil {
 		return nil, err
 	}
 
@@ -65,7 +65,7 @@ func (sc *ServiceCatalogServiceClient) Categories(ctx context.Context) ([]Servic
 	}
 
 	res := &ServiceCategories{}
-	if err := sc.client.makeRequest(req, res); err != nil {
+	if _, err := sc.client.makeRequest(req, res); err != nil {
 		return nil, err
 	}
 
@@ -86,7 +86,7 @@ func (sc *ServiceCatalogServiceClient) Get(ctx context.Context, id int) (*Servic
 	}
 
 	res := &ServiceCatalogItem{}
-	if err := sc.client.makeRequest(req, res); err != nil {
+	if _, err := sc.client.makeRequest(req, res); err != nil {
 		return nil, err
 	}
 

@@ -44,7 +44,7 @@ func (a *AnnouncementServiceClient) List(ctx context.Context, filter QueryFilter
 	}
 
 	res := &Announcements{}
-	if err := a.client.makeRequest(req, res); err != nil {
+	if _, err := a.client.makeRequest(req, res); err != nil {
 		return nil, err
 	}
 	return res.List, nil
@@ -64,7 +64,7 @@ func (a *AnnouncementServiceClient) Get(ctx context.Context, id int) (*Announcem
 	}
 
 	res := &Announcement{}
-	if err := a.client.makeRequest(req, res); err != nil {
+	if _, err := a.client.makeRequest(req, res); err != nil {
 		return nil, err
 	}
 
@@ -92,7 +92,7 @@ func (a *AnnouncementServiceClient) Create(ctx context.Context, details *Announc
 	}
 
 	res := &Announcement{}
-	if err := a.client.makeRequest(req, res); err != nil {
+	if _, err := a.client.makeRequest(req, res); err != nil {
 		return nil, err
 	}
 
@@ -120,7 +120,7 @@ func (a *AnnouncementServiceClient) Update(ctx context.Context, id int, details 
 	}
 
 	res := &Announcement{}
-	if err := a.client.makeRequest(req, res); err != nil {
+	if _, err := a.client.makeRequest(req, res); err != nil {
 		return nil, err
 	}
 
@@ -140,7 +140,7 @@ func (a *AnnouncementServiceClient) Delete(ctx context.Context, id int) error {
 		return err
 	}
 
-	if err := a.client.makeRequest(req, nil); err != nil {
+	if _, err := a.client.makeRequest(req, nil); err != nil {
 		return err
 	}
 	return nil

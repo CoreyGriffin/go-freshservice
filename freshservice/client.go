@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -72,7 +71,7 @@ func New(ctx context.Context, domain string, apikey string, client *http.Client)
 
 // makeRequest is used internally by the Freshservice API client to
 // make an API request and unmarshal into the response interface passed in
-func (fs *Client) makeRequest(r *http.Request, v interface{}) error {
+func (fs *Client) makeRequest(r *http.Request, v interface{}) (*http.Response, error) {
 	r.Header.Set("Accept", "application/json")
 	r.Header.Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0")
 	r.Header.Set("Strict-Transport-Security", "max-age=31536000 ; includeSubDomains")
@@ -83,28 +82,28 @@ func (fs *Client) makeRequest(r *http.Request, v interface{}) error {
 		r.URL.Scheme = "http"
 	}
 
+	r.Close = true
+
 	res, err := fs.client.Do(r)
 	if err != nil {
-		return fmt.Errorf("error making %s request to %s", r.Method, r.URL)
+		return nil, fmt.Errorf("error making %s request to %s", r.Method, r.URL)
 	}
-	defer res.Body.Close()
 
-	// If status code is not OK attempt to read the response in plain text
-	if res.StatusCode != 200 && res.StatusCode != 201 {
-		responseData, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			return fmt.Errorf("API request error: %s. unable to retrieve plain text response: %s", res.Status, err.Error())
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			panic(err)
 		}
-		return fmt.Errorf("API request error: %s", string(responseData))
+	}()
+
+	if res.StatusCode < 200 || res.StatusCode > 299 {
+		v = ErrorResponse{}
 	}
 
-	if v != nil {
-		if err = json.NewDecoder(res.Body).Decode(&v); err != nil {
-			return fmt.Errorf("API request was successful but error occured error decoding response body")
-		}
+	if v == nil {
+		return res, nil
 	}
 
-	return nil
+	return res, json.NewDecoder(res.Body).Decode(&v)
 }
 
 // We set the scheme in the HTTP request
