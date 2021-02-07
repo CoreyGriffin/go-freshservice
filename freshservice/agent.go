@@ -18,7 +18,7 @@ type AgentService interface {
 	Create(context.Context, *AgentDetails) (*AgentDetails, error)
 	Get(context.Context, int) (*AgentDetails, error)
 	Update(context.Context, int, *AgentDetails) (*AgentDetails, error)
-	Delete(context.Context, int) (bool, error)
+	Delete(context.Context, int) error
 	Deactivate(context.Context, int) (*AgentDetails, error)
 	Reactivate(context.Context, int) (*AgentDetails, error)
 	ConvertToRequester(context.Context, int) (*AgentDetails, error)
@@ -134,19 +134,23 @@ func (as *AgentServiceClient) Update(ctx context.Context, id int, ad *AgentDetai
 }
 
 // Delete a Freshservice agent
-func (as *AgentServiceClient) Delete(ctx context.Context, id int) (bool, error) {
+func (as *AgentServiceClient) Delete(ctx context.Context, id int) error {
 	url := &url.URL{
 		Scheme: "https",
 		Host:   as.client.Domain,
 		Path:   fmt.Sprintf("%s/%d/forget", agentURL, id),
 	}
 
-	_, err := http.NewRequestWithContext(ctx, http.MethodDelete, url.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, url.String(), nil)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return true, nil
+	if _, err := as.client.makeRequest(req, nil); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Deactivate a Frehservice agent (does not delete)
