@@ -137,9 +137,10 @@ type CustomFields map[string]interface{}
 // TicketListOptions holds the available options that can be
 // passed when requesting a list of Freshservice ticketsx
 type TicketListOptions struct {
-	FilterBy *TicketFilter
-	SortBy   *SortOptions
-	Embed    *TicketEmbedOptions
+	PageQuery string
+	FilterBy  *TicketFilter
+	SortBy    *SortOptions
+	Embed     *TicketEmbedOptions
 }
 
 // TicketEmbedOptions will optonally embed desired metadata in a ticket list response
@@ -172,6 +173,10 @@ type TicketFilter struct {
 // will return a new endpoint URL with query parameters attached
 func (opts *TicketListOptions) QueryString() string {
 	var qs []string
+
+	if opts.PageQuery != "" {
+		qs = append(qs, opts.PageQuery)
+	}
 
 	if opts.FilterBy != nil {
 		switch {

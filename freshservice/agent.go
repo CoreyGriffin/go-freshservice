@@ -14,7 +14,7 @@ const agentURL = "/api/v2/agents"
 // AgentService is an interface for interacting with
 // the agent endpoints of the Freshservice API
 type AgentService interface {
-	List(context.Context, QueryFilter) ([]AgentDetails, error)
+	List(context.Context, QueryFilter) ([]AgentDetails, string, error)
 	Create(context.Context, *AgentDetails) (*AgentDetails, error)
 	Get(context.Context, int) (*AgentDetails, error)
 	Update(context.Context, int, *AgentDetails) (*AgentDetails, error)
@@ -30,7 +30,7 @@ type AgentServiceClient struct {
 }
 
 // List all freshservice agents
-func (as *AgentServiceClient) List(ctx context.Context, filter QueryFilter) ([]AgentDetails, error) {
+func (as *AgentServiceClient) List(ctx context.Context, filter QueryFilter) ([]AgentDetails, string, error) {
 	url := &url.URL{
 		Scheme: "https",
 		Host:   as.client.Domain,
@@ -43,15 +43,16 @@ func (as *AgentServiceClient) List(ctx context.Context, filter QueryFilter) ([]A
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url.String(), nil)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	res := &Agents{}
-	if err := as.client.makeRequest(req, res); err != nil {
-		return nil, err
+	resp, err := as.client.makeRequest(req, res)
+	if err != nil {
+		return nil, "", err
 	}
 
-	return res.List, nil
+	return res.List, HasNextPage(resp), nil
 }
 
 // Get a specific Freshservice agent
@@ -68,7 +69,7 @@ func (as *AgentServiceClient) Get(ctx context.Context, id int) (*AgentDetails, e
 	}
 
 	res := &Agent{}
-	if err := as.client.makeRequest(req, res); err != nil {
+	if _, err := as.client.makeRequest(req, res); err != nil {
 		return nil, err
 	}
 
@@ -96,7 +97,7 @@ func (as *AgentServiceClient) Create(ctx context.Context, ad *AgentDetails) (*Ag
 	}
 
 	res := &Agent{}
-	if err := as.client.makeRequest(req, res); err != nil {
+	if _, err := as.client.makeRequest(req, res); err != nil {
 		return nil, err
 	}
 
@@ -124,7 +125,7 @@ func (as *AgentServiceClient) Update(ctx context.Context, id int, ad *AgentDetai
 	}
 
 	res := &Agent{}
-	if err := as.client.makeRequest(req, res); err != nil {
+	if _, err := as.client.makeRequest(req, res); err != nil {
 		return nil, err
 	}
 
@@ -162,7 +163,7 @@ func (as *AgentServiceClient) Deactivate(ctx context.Context, id int) (*AgentDet
 	}
 
 	res := &Agent{}
-	if err := as.client.makeRequest(req, res); err != nil {
+	if _, err := as.client.makeRequest(req, res); err != nil {
 		return nil, err
 	}
 
@@ -183,7 +184,7 @@ func (as *AgentServiceClient) Reactivate(ctx context.Context, id int) (*AgentDet
 	}
 
 	res := &Agent{}
-	if err := as.client.makeRequest(req, res); err != nil {
+	if _, err := as.client.makeRequest(req, res); err != nil {
 		return nil, err
 	}
 
@@ -204,7 +205,7 @@ func (as *AgentServiceClient) ConvertToRequester(ctx context.Context, id int) (*
 	}
 
 	res := &Agent{}
-	if err := as.client.makeRequest(req, res); err != nil {
+	if _, err := as.client.makeRequest(req, res); err != nil {
 		return nil, err
 	}
 
