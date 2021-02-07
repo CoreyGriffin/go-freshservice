@@ -132,3 +132,8 @@ func (fs *Client) Announcements() AnnouncementService {
 func (fs *Client) Agents() AgentService {
 	return &AgentServiceClient{client: fs}
 }
+
+// BusinessHours is the interface between the HTTP client and the Freshservice business hours related endpoints
+func (fs *Client) BusinessHours() BusinessHoursService {
+	return &BusinessHoursServiceClient{client: fs}
+}
