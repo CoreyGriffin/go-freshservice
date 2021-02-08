@@ -149,7 +149,7 @@ func (t *TicketServiceClient) Delete(ctx context.Context, id int) error {
 		Path:   fmt.Sprintf("%s/%d", ticketURL, id),
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPut, url.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, url.String(), nil)
 	if err != nil {
 		return err
 	}
