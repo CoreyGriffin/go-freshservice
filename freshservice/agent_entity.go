@@ -77,6 +77,7 @@ func (ar *AgentRole) Validate() error {
 
 // AgentListFilter holds the filters available when listing Freservice agents
 type AgentListFilter struct {
+	PageQuery   string
 	Email       *string
 	MobilePhone *int
 	WorkPhone   *int
@@ -87,19 +88,24 @@ type AgentListFilter struct {
 
 // QueryString allows the available filter items to meet the QueryFilter interface
 func (af *AgentListFilter) QueryString() string {
+	var qs []string
+	if af.PageQuery != "" {
+		qs = append(qs, af.PageQuery)
+	}
+
 	switch {
 	case af.Email != nil:
-		return fmt.Sprintf("email=%s", *af.Email)
+		qs = append(qs, fmt.Sprintf("email=%s", *af.Email))
 	case af.MobilePhone != nil:
-		return fmt.Sprintf("mobile_phone_number=%d", *af.MobilePhone)
+		qs = append(qs, fmt.Sprintf("mobile_phone_number=%d", *af.MobilePhone))
 	case af.WorkPhone != nil:
-		return fmt.Sprintf("work_phone_number=%d", *af.WorkPhone)
+		qs = append(qs, fmt.Sprintf("work_phone_number=%d", *af.WorkPhone))
 	case af.Active:
-		return fmt.Sprintf("active=%v", af.Active)
+		qs = append(qs, fmt.Sprintf("active=%v", af.Active))
 	case af.Fulltime:
-		return "state=fulltime"
+		qs = append(qs, "state=fulltime")
 	case af.Occasional:
-		return "state=occasional"
+		qs = append(qs, "state=occasional")
 	}
-	return ""
+	return strings.Join(qs, "&")
 }

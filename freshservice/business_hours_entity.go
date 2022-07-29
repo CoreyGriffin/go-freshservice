@@ -4,7 +4,7 @@ import "time"
 
 //BusinessHours holds the Business Hours Configurations in Freshservice
 type BusinessHours struct {
-	List []BusinessHoursConfig `json:"business_hours"`
+	List []BusinessHoursDetails `json:"business_hours"`
 }
 
 // BusinessHoursConfig holds a configuration for business hours in Freshservice

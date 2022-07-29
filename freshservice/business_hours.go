@@ -12,7 +12,7 @@ const businessHoursURL = "/api/v2/business_hours"
 // BusinessHoursService is an interface for interacting with
 // the business hours endpoints of the Freshservice API
 type BusinessHoursService interface {
-	List(context.Context) ([]BusinessHoursConfig, error)
+	List(context.Context) ([]BusinessHoursDetails, error)
 	Get(context.Context, int) (*BusinessHoursDetails, error)
 }
 
@@ -22,7 +22,7 @@ type BusinessHoursServiceClient struct {
 }
 
 // List all business hours configured in Freshservice
-func (c *BusinessHoursServiceClient) List(ctx context.Context) ([]BusinessHoursConfig, error) {
+func (c *BusinessHoursServiceClient) List(ctx context.Context) ([]BusinessHoursDetails, error) {
 	url := &url.URL{
 		Scheme: "https",
 		Host:   c.client.Domain,
