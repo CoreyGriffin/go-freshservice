@@ -95,7 +95,11 @@ func (fs *Client) makeRequest(r *http.Request, v interface{}) (*http.Response, e
 		}
 	}()
 
-	if res.StatusCode < 200 || res.StatusCode > 299 {
+	if res.StatusCode == http.StatusNotFound {
+		return res, fmt.Errorf("%s %s not found", r.Method, r.URL)
+	}
+
+	if res.StatusCode < http.StatusOK || res.StatusCode > 299 {
 		v = ErrorResponse{}
 	}
 
@@ -111,6 +115,16 @@ func stripURLScheme(domain string) string {
 	domain = strings.Replace(domain, "https://", "", -1)
 	domain = strings.Replace(domain, "http://", "", -1)
 	return domain
+}
+
+// Application is the interface between the HTTP client and the Freshservice application related endpoints
+func (fs *Client) Applications() ApplicationService {
+	return &ApplicationServiceClient{client: fs}
+}
+
+// Asset is the interface between the HTTP client and the Freshservice asset related endpoints
+func (fs *Client) Assets() AssetService {
+	return &AssetServiceClient{client: fs}
 }
 
 // Tickets is the interface between the HTTP client and the Freshservice ticket related endpoints
